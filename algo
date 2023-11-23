@@ -8,7 +8,7 @@
                 fwrite($arquivo,"$k");
                 $k++;
         }
-        fwrite($aquivo, "\r\n");
+        fwrite($arquivo, "\n");
     }
-    fclose($aquivo);
+    fclose($arquivo);
 ?>
