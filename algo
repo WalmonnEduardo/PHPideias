@@ -1,0 +1,14 @@
+<?php
+    $arquivo = fopen("teste.txt","a"); 
+    $k = 1;
+    for($i = 1 ; $i <= 10 ; $i++)
+    {
+        for($j = 1 ; $j <= $i ; $j++)
+        {
+                fwrite($arquivo,"$k");
+                $k++;
+        }
+        fwrite($aquivo, "\r\n");
+    }
+    fclose($aquivo);
+?>
