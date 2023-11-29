@@ -1,0 +1,64 @@
+<?php
+    $pokemons_api = file_get_contents('https://pokeapi.co/api/v2/pokemon');
+    //$dados_em_texto = file_get_contents("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0");
+    $pokemons = json_decode($pokemons_api,true);
+
+    for ($i=0; $i < 20; $i++) 
+    { 
+        $pokemon = $pokemons['results'][$i];
+        $todas_infos_api = file_get_contents($pokemon['url']);
+        $pokemons['results'][$i] = json_decode($todas_infos_api,true);
+    }
+
+    print '<pre>';
+    print_r($pokemons[results]);
+    print'</pre>';
+
+    die;
+
+?>
+<html>
+<head>
+    <title>Pokedex</title>
+    <style>
+        #pesquisa
+        {
+            background: #c92626;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            padding: 20px;
+            text-align: center;
+            
+        }
+        .pokemon
+        {
+            width: 12%;
+            border: solid 6px blue;
+            padding: 25px;/* Margem interna */
+            margin: 5px;
+            float: left;
+
+        }
+        .pokemon img
+        {
+            max-width: 100
+        }
+    </style>
+</head>
+<body>
+    <div id="pesquisa">
+        <form>
+            <input type="text" placeholder="Digite um Pokémon">
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+    <div id="pokemons">
+        <?php for($i - 0 ; $i <20 ; $i++):?>
+        <div class="pokemon">
+            <img src="<?$pokemons['results'][$i]['name']['sprites']['other']['dream_world']['dont_defalt']?>" alt="Jigglypuff" width="200px">
+            <h1><?php print("Nome".$pokemons['results'][$i]['name']); ?></h1>
+            
+        </div>
+        <?php endfor;?>
+    </div>
+</body>
+</html>
