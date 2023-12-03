@@ -1,12 +1,45 @@
 <?php
-  $numeros = array(array(1, 3, 5),array(7, 9, 11),array(13, 15, 17))
-  for($i = 0 ; $i < count($lista); $i++)
-  { 
-        for ($j = 0 ; $j < count($lista[$i]); $j++)
-        { 
-            echo $lista[$i][$j] . "\t";
-        }
-        echo "\n";
+//Questão 5  
+$numeros = array(array(1, 3, 5),array(7, 9, 11),array(13, 15, 17))
+for($i = 0 ; $i < count($lista); $i++)
+{ 
+    for ($j = 0 ; $j < count($lista[$i]); $j++)
+    { 
+      echo $lista[$i][$j] . "\t";
     }
-  }
+    echo "\n";
+}
+  
+  
+  //Questão 6
+  $numeros = array(array(1,3,5),array(7,9,11),array(13,15,17));
+    $total = 0;
+    for($i=0;$i<count($numeros);$i++)
+    {
+        for($j=0;$j<count($numeros[$i]);$j++)
+        {
+            $total += $numeros[$i][$j];
+        }
+    }
+//Questão7
+$matriz = array();
+    for ($i = 0; $i < 3; $i++)
+    {
+        for ($j = 0; $j < 5; $j++) 
+        {
+            $matriz[$i][$j] = readline("Digite o valor para a posição [$i][$j]: ");
+        }
+    }
+    for ($i = 0; $i < 3; $i++) 
+    {
+        for ($j = 0; $j < 5; $j++) 
+        {
+            $valor = $matriz[$i][$j];
+            if ($valor % 2 == 0) 
+            {
+                echo "Número par $valor na posição [$i][$j]\n";
+            }
+        }
+    }
+    print "O resultado da soma da matriz foi ".$total."\n";
 ?>
