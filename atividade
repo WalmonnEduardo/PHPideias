@@ -42,4 +42,20 @@ $matriz = array();
         }
     }
     print "O resultado da soma da matriz foi ".$total."\n";
+//Questão 8
+print "Teste 0: int(5)\n
+
+    Teste 1: bool(true)\n
+    
+    Teste 2: bool(false)\n
+    
+    Teste 3: bool(false)\n
+    
+    Teste 4: bool(true)\n
+    
+    Teste 5: string(4) \"nome\"\n
+    
+    Teste 6: string(9) \"profissao\"\n
+    
+    Teste 7: bool(true)\n";
 ?>
