@@ -1,0 +1,82 @@
+
+int motor_d_velocidade = 14; //D5
+int motor_d_in1 = 2; //D4
+int motor_d_in2 = 0; //D3
+int motor_e_velocidade = 4; //D2
+int motor_e_in3 = 5; //D1
+int motor_e_in4 = 16; //D0
+
+
+int sensor_e = 12; //D6
+int sensor_m = 15; //D8
+int sensor_d = 13; //D7
+int sensor_c = 10; //SD3
+void frente()
+{
+  digitalWrite(motor_d_in1, LOW);
+  digitalWrite(motor_d_in2, HIGH);
+  digitalWrite(motor_e_in3, LOW);  
+  digitalWrite(motor_e_in4, HIGH);
+  delay(3000);
+}
+void direita()
+{
+  digitalWrite(motor_d_in1, HIGH);
+  digitalWrite(motor_d_in2, LOW);
+  digitalWrite(motor_e_in3, LOW);  
+  digitalWrite(motor_e_in4, HIGH);
+  delay(3000);
+}
+void esquerda()
+{
+  digitalWrite(motor_d_in1, LOW);
+  digitalWrite(motor_d_in2, HIGH);
+  digitalWrite(motor_e_in3, HIGH);  
+  digitalWrite(motor_e_in4, LOW);
+  delay(3000);
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  pinMode(motor_d_velocidade, OUTPUT);
+  pinMode(motor_d_in1, OUTPUT);
+  pinMode(motor_d_in2, OUTPUT);
+  pinMode(motor_e_velocidade, OUTPUT);
+  pinMode(motor_e_in3, OUTPUT);
+  pinMode(motor_e_in4, OUTPUT);
+  pinMode(sensor_e, INPUT);
+  pinMode(sensor_m, INPUT);
+  pinMode(sensor_d, INPUT);
+  pinMode(sensor_c, INPUT);
+}
+void loop()
+{
+  //Sensores
+  int valor_e = analogRead(sensor_e);
+  int valor_m = analogRead(sensor_m);
+  int valor_d = analogRead(sensor_d);
+  int valor_c = analogRead(sensor_c);
+  int ideal_e = 100;
+  int ideal_m = 100;
+  int ideal_d = 100;
+  int ideal_c = 100;
+  
+  Serial.println(valor_e);
+  
+  //Movimentação
+  if((sensor_e > ideal_e && sensor_m > ideal_m && sensor_d > ideal_d) || (sensor_e < ideal_e && sensor_m > ideal_m && sensor_d < ideal_d))
+  {
+    frente();
+  }
+  
+  if((sensor_e > ideal_e && sensor_m > ideal_m && sensor_d < ideal_d) || (sensor_e > ideal_e && sensor_m < ideal_m && sensor_d < ideal_d))
+  {
+    esquerda();
+  }
+  if((sensor_e < ideal_e && sensor_m < ideal_m && sensor_d > ideal_d) || (sensor_e < ideal_e && sensor_m > ideal_m && sensor_d > ideal_d))
+  {
+    direita();
+  }
+  
+}
