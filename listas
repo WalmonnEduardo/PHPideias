@@ -66,6 +66,8 @@ function escolha2($lista)
             ml($lista);
         break;
         case '2':
+            $n = count($lista);
+            array_splice($lista,0,$n);
             escolha1($lista);
         break;
         case '3':
@@ -80,7 +82,7 @@ function salvar($lista)
 {
     $nome = readline("Nome do arquivo: ");
     $numl = count($lista);
-    $arquivo = fopen('$nome.txt', 'w');
+    $arquivo = fopen("$nome.txt", 'w');
     for($i = 0 ; $i < $numl; $i++)
     {
         fwrite($arquivo, '*********************************************************************************'."\n");
