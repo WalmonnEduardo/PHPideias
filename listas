@@ -1,0 +1,113 @@
+<?php
+$lista = array();
+function ml($lista)
+{
+    $lista[] = readline("Item: ");
+    system('clear');
+    escolha2($lista);
+}
+function escolha1($lista)
+{
+    print"*******************\n";
+    print"* 1.Lista         *\n";
+    print"*******************\n";
+    print"* 2.Finalizar     *\n";
+    print"*******************\n";
+    print"* 3.Abrir lista   *\n";
+    print"*******************\n";
+    $esc = readline("Escolha: ");
+    system('clear');
+    
+    switch ($esc)
+    {
+        case '1':
+            ml($lista);
+        break;
+        case '2':
+            die;
+        break;
+        case '3':
+            abrir($lista);
+        break;
+        default:
+            escolha1($lista);
+        break;
+    }
+
+}
+function escolha2($lista)
+{
+    $numl = count($lista);
+    if($numl != 0)
+    {
+        for($i = 0 ;$i < $numl; $i++)
+        {
+            print"*********************************************************************************\n";
+            print ($i+1)." $lista[$i]\n";
+            if($i == ($numl - 1))
+            {
+                print"*********************************************************************************\n";
+            }
+        }
+    }
+    print"Deseja continua?\n";
+    print"************\n";
+    print"* 1.Sim    *\n";
+    print"************\n";
+    print"* 2.Não    *\n";
+    print"************\n";
+    print"* 3.Salvar *\n";
+    print"************\n";
+    $esc = readline("Escolha: ");
+    system('clear');
+    switch ($esc)
+    {
+        case '1':
+            ml($lista);
+        break;
+        case '2':
+            escolha1($lista);
+        break;
+        case '3':
+            salvar($lista);
+        break;
+        default:
+            escolha2($lista);
+        break;
+    }
+}
+function salvar($lista)
+{
+    $nome = readline("Nome do arquivo: ");
+    $numl = count($lista);
+    $arquivo = fopen('$nome.txt', 'w');
+    for($i = 0 ; $i < $numl; $i++)
+    {
+        fwrite($arquivo, '*********************************************************************************'."\n");
+        fwrite($arquivo, ($i+1).' '.$lista[$i]."\n");
+        if($i == ($numl - 1))
+        {
+            fwrite($arquivo,'*********************************************************************************'."\n");
+        }
+    }
+    fclose($arquivo);
+    escolha1($lista);
+}
+function abrir($lista)
+{
+    $nome = readline("Qual lista: ");
+    system('cat '.$nome);
+    $voltar = readline("Aperte qualquer tecla para voltar ");
+    if($voltar == '')
+    {
+        abrir($lista);
+    }
+    else
+    {
+        system('clear');
+        escolha1($lista);
+    }
+
+}
+escolha1($lista);
+?>
