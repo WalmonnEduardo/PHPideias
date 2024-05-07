@@ -15,6 +15,8 @@ function escolha1($lista)
     print"*******************\n";
     print"* 3.Abrir lista   *\n";
     print"*******************\n";
+    print"* 4.Excluir lista *\n";
+    print"*******************\n";
     $esc = readline("Escolha: ");
     system('clear');
     
@@ -28,6 +30,12 @@ function escolha1($lista)
         break;
         case '3':
             abrir($lista);
+        break;
+        case '4':
+            $nome = readline("Excluir: ");
+            system("rm $nome");
+            system('clear');
+            escolha1($lista);
         break;
         default:
             escolha1($lista);
@@ -93,6 +101,9 @@ function salvar($lista)
         }
     }
     fclose($arquivo);
+    $n = count($lista);
+    array_splice($lista,0,$n);
+    system('clear');
     escolha1($lista);
 }
 function abrir($lista)
