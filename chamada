@@ -1,0 +1,218 @@
+<?php
+$alunos = array(); //Vai guardar os alunos
+$preseca = array();//Vai anotar C ou F na presença do dia
+$i = 0;
+$data = date('d/m/Y H:i:s');
+/*Menu()
+    1.Criar turma
+        1.1escolha1()
+        2.salvar_turma()
+    2.Fazer chamada
+        2.1pegar_lista()
+        2.2chamada()
+        2.3escolha2()
+        2.4organizar_chamda()
+            2.4.1maximo
+            2.4.2adicionar
+        2.5salvar_chamada()
+    3.Abrir turma
+    4.Finalizar
+*/
+
+
+
+//menu
+function menu()
+{
+    system('clear');
+    print"*******************\n";
+    print"* 1.Criar turma   *\n";
+    print"*******************\n";
+    print"* 2.Fazer chamada *\n";
+    print"*******************\n";
+    print"* 3.Abrir turma   *\n";
+    print"*******************\n";
+    print"* 4.Finalizar     *\n";
+    print"*******************\n";
+    $escolha = readline("Escolha: ");
+    switch($escolha)
+    {
+        case '1':
+            system('clear');
+            criar_turma();
+        break;
+        case '2':
+            system('clear');
+            pegar_lista();
+            chamada();
+        break;
+        case '3':
+            system('clear');
+            $nome = readline("Turma: ");
+            system('clear');
+            system("cat $nome.txt");
+            readline("");
+            system('clear');
+            menu();
+        break;
+        case '4':
+            system('clear');
+            die;
+        break;
+        default:
+            menu();
+        break;
+    }
+}
+
+//Criar turma
+function criar_turma()
+{
+    global $alunos;
+    $alunos[] = readline("Item: ");
+    system('clear');
+    escolha1();
+}
+function escolha1()
+{
+    global $alunos;
+    $num = count($alunos);
+    if($num != 0)
+    {
+        for($i = 0 ;$i < $num; $i++)
+        {
+            print"*********************************************************************************\n";
+            print ($i+1)." $alunos[$i]\n";
+            if($i == ($num - 1))
+            {
+                print"*********************************************************************************\n";
+            }
+        }
+    }
+    print"Deseja continua?\n";
+    print"************\n";
+    print"* 1.Sim    *\n";
+    print"************\n";
+    print"* 2.Não    *\n";
+    print"************\n";
+    print"* 3.Salvar *\n";
+    print"************\n";
+    $esc = readline("Escolha: ");
+    system('clear');
+    switch ($esc)
+    {
+        case '1':
+            criar_turma();
+        break;
+        case '2':
+            array_splice($lista,0,$num);
+            menu();
+        break;
+        case '3':
+            salvar_turma();
+        break;
+        default:
+            escolha1();
+        break;
+    }
+}
+function salvar_turma()
+{
+    global $alunos;
+    $nome = readline("Nome do arquivo: ");
+    $num = count($alunos);
+    $arquivo = fopen("$nome.txt", 'w');
+    for($i = 0 ; $i < $num; $i++)
+    {
+        fwrite($arquivo, ($i+1).' '.$alunos[$i]."\n");
+    }
+    fclose($arquivo);
+    array_splice($alunos,0,$num);
+    system('clear');
+    menu();
+}
+
+//Chamada
+function pegar_lista() //Pega um arquivo txt com os nomes dos alunos joga no array alunos
+{
+    global $alunos;
+    $nome = readline("Turma: ");
+    $arquivo = fopen("$nome.txt",'r');
+    while (!feof($arquivo))
+    {
+        $linha = fgets($arquivo);
+        $alunos[] = trim($linha);
+    }
+    fclose($arquivo);
+    return $alunos;
+}
+function chamada()//Verifica pega f ou v na presença
+{
+    global $alunos;
+    global $presenca;
+    $num = count($alunos);
+    for($i = 0 ; $i < $num ;$i++)
+    {
+        $presenca[$i] = readline("$alunos[$i] : ");
+        system('clear');
+    }
+    $alunos = organizar_chamada();
+    salvar_chamada($alunos);
+}
+function organizar_chamada()
+{
+    $maximo = maximo();
+    $alunos = adicionar($maximo);
+    return $alunos;
+}
+function maximo() //Ve qual é o maior nome
+{
+    global $alunos;
+    $num = count($alunos);
+    $maximo = 0;
+    for($i = 0 ; $i < $num ; $i++)
+    {
+        $letras = strlen($alunos[$i]);
+        if($maximo < $letras)
+        {
+            $maximo = $letras;
+        }
+    }
+    return $maximo;
+}
+function adicionar($maximo)//Pega o maior nome e adiciona espaço vazio para ficar alinhado no arquivo
+{
+    global $alunos;
+    $num = count($alunos);
+    for($i = 0 ; $i < $num ;$i++)
+    {
+        $letras = strlen($alunos[$i]);
+        while($letras <= ($letras + 1))
+        {
+            $alunos[$i] += " ";
+        }
+        $alunos[$i] += ":";
+    }
+    return $alunos;
+}
+function salvar_chamada($alunos)
+{
+    global $presenca;
+    global $data;
+    $nome = readline("Nome do arquivo: ");
+    $num = count($alunos);
+    $arquivo = fopen("$nome-chamada-$data.txt", 'w');
+    for($i = 0 ; $i < $num; $i++)
+    {
+        fwrite($arquivo, ($i+1).' '.$alunos[$i]."\n");
+    }
+    fclose($arquivo);
+    array_splice($alunos,0,$num);
+    system('clear');
+    menu();
+}
+
+//Ação
+menu();
+
+?>
