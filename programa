@@ -1,0 +1,194 @@
+<?php
+$linhas = array();
+$linhas[] = "<?php";
+$vars = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
+function menu()
+{
+    global $linhas;
+    system('clear');
+    $total = count($linhas);
+    for($i = 0 ; $i < $total; $i++)
+    {
+        print $i."° ".$linhas[$i]."\n";
+    }
+    print "***********************\n";
+    print "* 1.Print             *\n";
+    print "***********************\n";
+    print "* 2.For               *\n";
+    print "***********************\n";
+    print "* 3.While             *\n";
+    print "***********************\n";
+    print "* 4.Do while          *\n";
+    print "***********************\n";
+    print "* 5.Fechar do while   *\n";
+    print "***********************\n";
+    print "* 6.Readline          *\n";
+    print "***********************\n";
+    print "* 7.If                *\n";
+    print "***********************\n";
+    print "* 8.Switch            *\n";
+    print "***********************\n";
+    print "* 9.Operação          *\n";
+    print "***********************\n";
+    print "* 10.Function         *\n";
+    print "***********************\n";
+    print "* 11.Fechar chave     *\n";
+    print "***********************\n";
+    print "* 12.Editar linha     *\n";
+    print "***********************\n";
+    print "* 13.Salvar programa  *\n";
+    print "***********************\n";
+    print "* 14.Finalizar tarefa *\n";
+    print "***********************\n";
+    $esc = readline("Escolha: ");
+    switch($esc)
+    {
+        case 1:
+            make_print();
+        break;
+        case 2:
+            $quantidade = readline("Quantidade: ");
+            $maximo = readline("Maximo: ");
+            $w = $quantidade;
+            make_for($maximo,$quantidade,$w);
+            menu();
+        break;
+        case 3:
+            $condicao = readline("Condição: ");
+            $linhas[] = "while($condicao){\n";
+            menu();
+        break;
+        case 4:
+            $linhas[] = "do{\n";
+        break;
+        case 5:
+            $condicao = readline("Condição: ");
+            $linhas[] = "}while($condicao)";
+            menu();
+        break;
+        case 6:
+            $var = readline("Variável: ");
+            $escrita = readline("Readline: ");
+            $linhas[] = "$$var = readline(\"$escrita\");";
+            menu();
+        break;
+        case 7:
+            make_if();
+            menu();
+        break;
+        case 8:
+            $quantidade = readline("Quantidade: ");
+            $w = 0;
+            escolha($quantidade, $w);
+        break;
+        case 9:
+            $linhas[] = readline("Operação: ");
+            menu();
+        break;
+        case 10:
+            $name = readline("Nome: ");
+            $linhas[] = "function $name(){";
+        break;
+        case 11:
+            $l = readline("Total: ");
+            fechar_chave($l);
+            menu();
+        break;
+        case 12:
+            $i = readline("Qual linha?");
+            $linhas[$i] = readline("");
+            menu();
+        break;
+        case 13:
+            terminar($linhas);
+            menu();
+        break;
+        case 14:
+            die;
+        break;
+        default:
+            menu();
+        break;
+    }
+}
+function escolha($quantidade, $w)
+{
+    global $linhas;
+    for($i = 0 ; $i < $quantidade ; $i++)
+    {
+        $linhas[] = "print \"".($i+1).".".readline("Opição ".($i+1).": ")."\\n\";";
+    }
+    $var= readline("Variável? ");
+    $linhas[] = "$$var = readline(\"Escolha: \");";
+    $linhas[] = "switch($$var){";
+    for($i = 1 ; $i <= $quantidade ; $i++)
+    {
+        $linhas[] = "case ".($i).": ".readline("Case $i: ")."; break;";
+    }
+    $linhas[] = "default: ".readline("Default: ")."; break;";
+    $linhas[] = "}";
+}
+function make_print()
+{
+    global $linhas;
+    $p = readline("Print: ");
+    $linhas[] = "print \"$p\\n\";";
+    menu();
+}
+function make_if()
+{
+    global $linhas;
+    $condicao = readline("Condição: ");
+    $linhas[] = "if($condicao)\n{";
+}
+function make_for($maximo,$quantidade,$w)
+{
+    global $vars;
+    global $linhas;
+    system('clear');
+    $o =0;
+    if($quantidade == $w)
+    {
+        $ifor = "for($$vars[$o] = 0 ; $$vars[$o] < $maximo ; $$vars[$o]++){\n";
+        $linhas[] = $ifor;
+        $o++;
+    }
+    if($quantidade > 1)
+    {
+        for_dentro_for($maximo,$quantidade,$w);
+    }
+    
+}
+function fechar_chave($l)
+{
+    global $linhas;
+    global $arquivo;
+    $ffor = "\n}";
+    if($l != 0)
+    {
+        $linhas[] = $ffor;
+        $l --;
+        fechar_chave($l);
+    }
+}
+function for_dentro_for($maximo,$quantidade,$w)
+{
+    if($quantidade != 0)
+    {
+        $quantidade --;
+        make_for($maximo,$quantidade,$w);
+    }
+}
+function terminar($linhas)
+{
+    $arquivo = fopen("teste.php",'w');
+    for($i = 0 ; $i < count($linhas) ; $i++)
+    {
+        fwrite($arquivo,"$linhas[$i]\n");
+    }
+    fwrite($arquivo,"readline(\"\");");
+    fwrite($arquivo,"?>");
+    fclose($arquivo);
+}
+menu();
+?>
