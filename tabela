@@ -1,0 +1,117 @@
+<?php
+function menu($lista)
+{
+    system('clear');
+    print"==========================\n";
+    print"[ 1 -> Criar tabela      ]\n";
+    print"==========================\n";
+    print"[ 2 -> Abrir tabela      ]\n";
+    print"==========================\n";
+    print"[ 3 -> Exlcuir tabela    ]\n";
+    print"==========================\n";
+    print"[ 4 -> Finalizar         ]\n";
+    print"==========================\n";
+    $esc = readline("Escolha: ");
+    switch($esc)
+    {
+        case 1:
+            system('clear');
+            $lista[] = "Situação: ".situacao();
+            system('clear');
+            $lista[] = "Pensamento: ".pensamento();
+            system('clear');
+            $lista[] = "Emoção: ".emocao();
+            system('clear');
+            $lista[] = "Comportamento: ".comportamento();
+            system('clear');
+            salvar($lista);
+            menu($lista);
+        break;
+        case 2:
+            system("clear ; ls sentimentos_*.txt | cut -d'_' -f2 | cut -d'.' -f1");
+            $abrir = readline("Qual arquivo deseja abrir? ");
+            if($abrir != "")
+            {
+                system("cat sentimentos_$abrir.txt");
+                readline("");
+            }
+            menu($lista);
+        break;
+        case 3:
+            system("clear ; ls sentimentos_*.txt | cut -d'_' -f2 | cut -d'.' -f1");
+            $excluir = readline("Qual arquivo deseja exlcuir? ");
+            if($excluir != "")
+            {
+                system("rm sentimentos_$excluir.txt");
+            }
+            system('clear');
+            menu($lista);
+        break;
+        case 4:
+            system('clear');
+            die;
+        break;
+        default:
+            menu($lista);
+        break;
+    }
+}
+$lista = array();
+$topico = array("Situação: ","Pensamento: ","Emoção: ","Comportamento: ");
+function situacao()
+{
+    $s = readline("Situação: ");
+    return $s;
+}
+function pensamento()
+{
+    $p = readline("Pensamento: ");
+    return $p;
+}
+function emocao()
+{
+    $e = readline("Emoção: ");
+    return $e;
+}
+function comportamento()
+{
+    $c = readline("Comportamento: ");
+    return $c;
+}
+function salvar($lista)
+{
+    $nome = readline("Nome do arquivo: ");
+    $numl = count($lista);
+    $arquivo = fopen("sentimentos_$nome.txt", 'w');
+    fwrite($arquivo, "================================================================================="."\n");
+    for($l = 0 ; $l < count($lista); $l++)
+    {
+        $total = strlen($lista[$l]);
+        $j = 0;
+        for($i = 0 ; $i <= $total; $i++)
+        {
+            if($j>70 && (substr($lista[$l],$i, 1) == ' '|| substr($lista[$l],$i-1, 1) == ' '))
+            {
+                fwrite($arquivo,"\n");
+                $j = 0;
+            }
+            else
+            {
+                $j++;
+            }
+            if($j != 0 || substr($lista[$l],$i, 1) != ' ')
+            {
+                fwrite($arquivo, substr($lista[$l],$i, 1));
+            }
+        }
+        if($l <= ($total - 1))
+        {
+            fwrite($arquivo,"\n=================================================================================\n");
+        }
+    }
+    fclose($arquivo);
+    system('clear');
+}
+menu($lista);
+
+?>
