@@ -1,218 +1,324 @@
 <?php
-$alunos = array(); //Vai guardar os alunos
-$preseca = array();//Vai anotar C ou F na presença do dia
-$i = 0;
-$data = date('d/m/Y H:i:s');
-/*Menu()
-    1.Criar turma
-        1.1escolha1()
-        2.salvar_turma()
-    2.Fazer chamada
-        2.1pegar_lista()
-        2.2chamada()
-        2.3escolha2()
-        2.4organizar_chamda()
-            2.4.1maximo
-            2.4.2adicionar
-        2.5salvar_chamada()
-    3.Abrir turma
-    4.Finalizar
-*/
-
-
-
-//menu
+require("./arquivos/objeto.php");
+$tabela = new Texto();
 function menu()
 {
-    system('clear');
-    print"*******************\n";
-    print"* 1.Criar turma   *\n";
-    print"*******************\n";
-    print"* 2.Fazer chamada *\n";
-    print"*******************\n";
-    print"* 3.Abrir turma   *\n";
-    print"*******************\n";
-    print"* 4.Finalizar     *\n";
-    print"*******************\n";
+    system("clear");
+    global $tabela;
+    $itens = array("Cadastrar turma","Abrir turma","Abrir Chamada de turma","Chamar turma","Editar turma","Excluir turma","Finalizar");
+    $tabela->montar_tabela($itens);
     $escolha = readline("Escolha: ");
     switch($escolha)
     {
-        case '1':
-            system('clear');
-            criar_turma();
-        break;
-        case '2':
-            system('clear');
-            pegar_lista();
-            chamada();
-        break;
-        case '3':
-            system('clear');
-            $nome = readline("Turma: ");
-            system('clear');
-            system("cat $nome.txt");
-            readline("");
-            system('clear');
+        case 1:
+            cadastrar_turma();
             menu();
         break;
-        case '4':
-            system('clear');
+        case 2:
+            mostrar_chamada();
+            menu();
+        break;
+        case 3:
+            abrir();
+            menu();
+        break;
+        case 4:
+            chamada();
+            menu();
+        break;
+        case 5:
+            editar();
+            menu();
+        break;
+        case 6:
+            excluir_turma();
+            menu();
+        case 7:
             die;
         break;
         default:
             menu();
         break;
+            
+            
+    }
+    
+}
+function cadastrar_turma()
+{
+    $nome = readline("Nome da turma: ");
+    do
+    {
+        $total = readline("Número de alunos da turma: ");
+    }while(!is_numeric($total));
+    for($i = 0 ; $i< $total;$i++)
+    {
+        $alunos[$i]['nome'] = readline("Nome do aluno ".($i+1)." : ");
+    }
+    sort($alunos);
+    mkdir("./chamada/$nome", 0777, true);    
+    $alunos = json_encode($alunos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    file_put_contents("./chamada/$nome/$nome.json",$alunos);
+}
+function mostrar_chamada()
+{
+    global $tabela;
+    system('clear');
+    system('ls ./chamada');
+    $turma = readline("Qual turma?");
+    system('clear');
+    if(file_exists("./chamada/$turma/$turma.json"))
+    {
+        $alunos = file_get_contents("./chamada/$turma/$turma.json");
+        $alunos = json_decode($alunos,true);
+        for($i = 0 ;$i < count($alunos);$i++)
+        {
+            $nomes[] = $alunos[$i]['nome'];
+        }
+        $tabela->montar_tabela($nomes);
+        readline("");
     }
 }
-
-//Criar turma
-function criar_turma()
+function abrir()
 {
-    global $alunos;
-    $alunos[] = readline("Item: ");
+    global $tabela;
     system('clear');
-    escolha1();
-}
-function escolha1()
-{
-    global $alunos;
-    $num = count($alunos);
-    if($num != 0)
+    system('ls ./chamada');
+    $turma  = readline("De qual turma deseja ver a chamada? ");
+    system('clear');
+    if(file_exists("./chamada/{$turma}/{$turma}.datas.json"))
     {
-        for($i = 0 ;$i < $num; $i++)
+        $datas = file_get_contents("./chamada/{$turma}/{$turma}.datas.json");
+        $datas = json_decode($datas,true);
+        $alunos = file_get_contents("./chamada/{$turma}/{$turma}.json");
+        $alunos = json_decode($alunos,true);
+        for($i = 0 ; $i < count($datas);$i++)
         {
-            print"*********************************************************************************\n";
-            print ($i+1)." $alunos[$i]\n";
-            if($i == ($num - 1))
+            print $turma." -> ".$datas[$i]."\n";
+        }
+        $data = readline("Digite somente a data no estilo dd-mm-aaaa? ");
+        $existe = false;
+        for($i = 0 ; $i < count($datas);$i++)
+        {
+            if($data == $datas[$i])
             {
-                print"*********************************************************************************\n";
+                $existe = true;
+                break;
             }
         }
+        if($existe)
+        {
+            for($i = 0; $i < count($alunos); $i++)
+            {
+                $nomes[] = $alunos[$i]['nome'];
+            }
+            $n = $tabela->contagem($nomes);
+            for($i = 0;$i< count($alunos);$i++)
+            {
+                print $tabela->alinhar_topicos($alunos[$i]['nome'],$n,": ").$alunos[$i][$data]."\n";
+            }
+            readline("");
+        }
     }
-    print"Deseja continua?\n";
-    print"************\n";
-    print"* 1.Sim    *\n";
-    print"************\n";
-    print"* 2.Não    *\n";
-    print"************\n";
-    print"* 3.Salvar *\n";
-    print"************\n";
-    $esc = readline("Escolha: ");
+}
+function chamada()
+{
+    global $tabela;
+    $voltar = array();
+    $resposta = array();
     system('clear');
-    switch ($esc)
+    system('ls ./chamada');
+    $turma = readline("Qual turma?");
+    if($turma != "")
     {
-        case '1':
-            criar_turma();
+        if(file_exists("./chamada/{$turma}/{$turma}.json"));
+        {
+            $alunos = file_get_contents("./chamada/{$turma}/{$turma}.json");
+            $alunos = json_decode($alunos,true);
+        
+            for($i = 0 ;$i < count($alunos);$i++)
+            {
+                system('clear');
+                $presenca[$i] = readline($alunos[$i]['nome'].":");
+                if($presenca[$i] != "s" && $presenca[$i] != "f")
+                {
+                    $voltar[] = $i;
+                }
+            }
+            if(count($voltar) != 0)
+            {
+                $rep = count($voltar);
+                do
+                {
+                    for($i = 0 ; $i < count($alunos) ;$i++)
+                    {
+                        if($presenca[$i] != "s" && $presenca[$i] != "f")
+                        {
+                            system('clear');
+                            $presenca[$i] = readline($alunos[$i]['nome'].": ");
+                            if($presenca[$i] == "s" || $presenca[$i] == "f")
+                            {
+                                unset($voltar[$i]);
+                                $rep--;
+                            } 
+                        }
+                    }
+                }while($rep > 0);
+            }
+            $data = date('d-m-Y');
+            for($i = 0 ;$i < count($alunos);$i++)
+            {
+                if($presenca[$i] == "s")
+                {
+                    $alunos[$i]["$data"] = "presente";
+                }
+                else
+                {
+                    $alunos[$i]["$data"] = "faltou";
+                }
+            }
+            system('clear');
+            $alunos = json_encode($alunos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            file_put_contents("./chamada/{$turma}/{$turma}.json",$alunos);
+            if(file_exists("./chamada/{$turma}/{$turma}.datas.json"))
+            {
+                $datas = file_get_contents("./chamada/{$turma}/{$turma}.datas.json");
+                $datas = json_decode($datas,true);
+                for($i = 0 ;$i < count($datas) ; $i++)
+                {
+                    if($datas[$i] == date('d-m-Y'))
+                    {
+                        $criar = false;
+                        break;
+                    }
+                    else
+                    {
+                        $criar = true;
+                    }
+                }
+                if($criar)
+                {
+                    $datas[] = date('d-m-Y');
+                }
+            }
+            $datas = json_encode($datas, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            file_put_contents("./chamada/{$turma}/{$turma}.datas.json",$datas);
+            
+        }
+    }
+}
+function editar()
+{
+    system('clear');
+    system("ls ./chamada");
+    $turma = readline("Turma a ser editarda: ");
+    if(file_exists("./chamada/$turma"))
+    {
+        escolha_editar($turma);
+    }
+}
+function escolha_editar($turma)
+{
+    system('clear');
+    global $tabela;
+    $itens = array("Editar nome de aluno","Adicionar aluno","Remover aluno","Finalizar");
+    $tabela->montar_tabela($itens);
+    $esc = readline("Escolha: ");
+    switch($esc)
+    {
+        case 1:
+            system('clear');
+            $alunos = file_get_contents("./chamada/{$turma}/{$turma}.json");
+            $alunos = json_decode($alunos,true);
+            for($i = 0 ;$i < count($alunos);$i++)
+            {
+                $nomes[] = $alunos[$i]['nome'];
+            }
+            $tabela->montar_tabela($nomes);
+            $nome = readline("Nome que desjea editar: ");
+            if($nome != "")
+            {
+                for($i = 0 ; $i < count($alunos) && $alunos[$i]['nome'] != $nome; $i++)
+                {
+                }
+                if($alunos[$i]['nome'] != $nome)
+                {
+                    print"Aluno não existe\n";
+                    readline("");
+                    editar();
+                }
+                else
+                {
+                    $novo = readline("Nome novo: ");
+                    $alunos[$i]['nome'] = $novo;
+                }
+            }
+            sort($alunos);
+            $alunos = json_encode($alunos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            file_put_contents("./chamada/{$turma}/{$turma}.json",$alunos);
+            escolha_editar($turma);
         break;
-        case '2':
-            array_splice($lista,0,$num);
+        case 2:
+            system('clear');
+            $alunos = file_get_contents("./chamada/{$turma}/{$turma}.json");
+            $alunos = json_decode($alunos,true);
+            for($i = 0 ;$i < count($alunos);$i++)
+            {
+                $nomes2[] = $alunos[$i]['nome'];
+            }
+            $tabela->montar_tabela($nomes2);
+            $alunos[]['nome'] = readline("Nome: ");
+            sort($alunos);
+            $alunos = json_encode($alunos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            file_put_contents("./chamada/{$turma}/{$turma}.json",$alunos);
+            escolha_editar($turma);
+        break;
+        case 3:
+            system('clear');
+            $alunos = file_get_contents("./chamada/{$turma}/{$turma}.json");
+            $alunos = json_decode($alunos,true);
+            for($i = 0 ;$i < count($alunos);$i++)
+            {
+                $nomes3[] = $alunos[$i]['nome'];
+            }
+            $tabela->montar_tabela($nomes3);
+            $nome = readline("Nome que desjea remover: ");
+            if($nome != "")
+            {
+                for($i = 0 ; $i < count($alunos) && $alunos[$i]['nome'] != $nome; $i++)
+                {
+                }
+                if($alunos[$i]['nome'] != $nome)
+                {
+                    print"Aluno não existe\n";
+                    readline("");
+                    editar();
+                }
+                else
+                {
+                    unset($alunos[$i]);
+                }
+            }
+            sort($alunos);
+            $alunos = json_encode($alunos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            file_put_contents("./chamada/{$turma}/{$turma}.json",$alunos);
+            escolha_editar($turma);
+            escolha_editar($turma);
+        break;
+        case 4:
             menu();
         break;
-        case '3':
-            salvar_turma();
-        break;
         default:
-            escolha1();
+            escolha_editar($turma);
         break;
     }
 }
-function salvar_turma()
+function excluir_turma()
 {
-    global $alunos;
-    $nome = readline("Nome do arquivo: ");
-    $num = count($alunos);
-    $arquivo = fopen("$nome.txt", 'w');
-    for($i = 0 ; $i < $num; $i++)
-    {
-        fwrite($arquivo, ($i+1).' '.$alunos[$i]."\n");
-    }
-    fclose($arquivo);
-    array_splice($alunos,0,$num);
-    system('clear');
-    menu();
+    system('ls ./chamada');
+    $turma = readline("Turma a ser excluida: ");
+    system("cd ./chamada/$turma ; rm -r $turma.json ; rm -r $turma.datas.json ; cd /home/user/utilidades/utilidadesphp");
+    rmdir("./chamada/$turma");
 }
-
-//Chamada
-function pegar_lista() //Pega um arquivo txt com os nomes dos alunos joga no array alunos
-{
-    global $alunos;
-    $nome = readline("Turma: ");
-    $arquivo = fopen("$nome.txt",'r');
-    while (!feof($arquivo))
-    {
-        $linha = fgets($arquivo);
-        $alunos[] = trim($linha);
-    }
-    fclose($arquivo);
-    return $alunos;
-}
-function chamada()//Verifica pega f ou v na presença
-{
-    global $alunos;
-    global $presenca;
-    $num = count($alunos);
-    for($i = 0 ; $i < $num ;$i++)
-    {
-        $presenca[$i] = readline("$alunos[$i] : ");
-        system('clear');
-    }
-    $alunos = organizar_chamada();
-    salvar_chamada($alunos);
-}
-function organizar_chamada()
-{
-    $maximo = maximo();
-    $alunos = adicionar($maximo);
-    return $alunos;
-}
-function maximo() //Ve qual é o maior nome
-{
-    global $alunos;
-    $num = count($alunos);
-    $maximo = 0;
-    for($i = 0 ; $i < $num ; $i++)
-    {
-        $letras = strlen($alunos[$i]);
-        if($maximo < $letras)
-        {
-            $maximo = $letras;
-        }
-    }
-    return $maximo;
-}
-function adicionar($maximo)//Pega o maior nome e adiciona espaço vazio para ficar alinhado no arquivo
-{
-    global $alunos;
-    $num = count($alunos);
-    for($i = 0 ; $i < $num ;$i++)
-    {
-        $letras = strlen($alunos[$i]);
-        while($letras <= ($letras + 1))
-        {
-            $alunos[$i] += " ";
-        }
-        $alunos[$i] += ":";
-    }
-    return $alunos;
-}
-function salvar_chamada($alunos)
-{
-    global $presenca;
-    global $data;
-    $nome = readline("Nome do arquivo: ");
-    $num = count($alunos);
-    $arquivo = fopen("$nome-chamada-$data.txt", 'w');
-    for($i = 0 ; $i < $num; $i++)
-    {
-        fwrite($arquivo, ($i+1).' '.$alunos[$i]."\n");
-    }
-    fclose($arquivo);
-    array_splice($alunos,0,$num);
-    system('clear');
-    menu();
-}
-
-//Ação
 menu();
-
 ?>
