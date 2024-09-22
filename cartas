@@ -17,6 +17,7 @@
 | + getImg          |
 ---------------------
 __________________________________________________________________________________________________
+
 FUNÇÕES DO PROGRAMA
 menu() -> Lista as opições do usuário;
 baralho()-> Gera o baralho;
@@ -337,7 +338,7 @@ foreach($dados as $dado)
         $imgs[$i][] = "|   |    S    |   |\n";
         $imgs[$i][] = "|   |         |   |\n";
         $imgs[$i][] = "|   |_________|   |\n";
-        $imgs[$i][] = "|               $dado |\n";
+        $imgs[$i][] = "|              $dado |\n";
         $imgs[$i][] = "-------------------\n";
     }
     else
