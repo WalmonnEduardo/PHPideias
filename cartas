@@ -3,9 +3,9 @@
 -----Class-Carta-----
 | Atributos         |
 |-------------------|
-| - nome            |
-| - numero          |
-| - img             |
+| - nome:string     |
+| - numero:int      |
+| - img:array       |
 |-------------------|
 | Métodos           |
 |-------------------|
@@ -441,7 +441,7 @@ function escreva_devagar(string $mensagem)
 function ajuda()
 {
     system("clear");
-    escreva_devagar("Esse é um jogo de cartas onde  você tem  que adivinhar o número escolhido pelo programa o qual representa uma carta.\nQuando o jogo iniciar aparecerá um menu onde você escolhe um número da lista e dá \"ENTER\" para selecionar uma opição\nQuando você iniciar o jogo você deve tentar um número entre 0 e 51 e dar \"Enter\" para fazer a tentativa\n\nAperte \"ENTER\" para iniciar!");
+    escreva_devagar("Esse é um jogo de cartas onde  você tem  que adivinhar o número escolhido pelo programa o qual representa uma carta.\nQuando o jogo iniciar aparecerá um menu onde você escolhe um número da lista e dá \"ENTER\" para selecionar uma opção.\nQuando você iniciar o jogo você deve tentar um número entre 0 e 51 e dar \"Enter\" para fazer a tentativa.\n\nAperte \"ENTER\" para iniciar!");
     readline("");
 }
 ajuda();
